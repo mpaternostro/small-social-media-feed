@@ -3,11 +3,7 @@ import { Link } from "react-router-dom";
 import { createUseStyles } from "react-jss";
 
 const useStyles = createUseStyles({
-  logo: {
-    fontSize: "2rem",
-    alignSelf: "center",
-    margin: "0.5rem",
-  },
+  logo: {},
 });
 
 function Navbar() {
@@ -25,8 +21,8 @@ function Navbar() {
       aria-label="main navigation"
     >
       <div className="navbar-brand">
-        <Link to="/">
-          <i className={`fas fa-comments ${classes.logo}`} />
+        <Link to="/" className="navbar-item">
+          Posts
         </Link>
         <div
           role="button"
@@ -47,9 +43,6 @@ function Navbar() {
         className={`navbar-menu ${isOpen ? "is-active" : ""}`}
       >
         <div className="navbar-start">
-          <Link to="/posts" className="navbar-item">
-            Posts
-          </Link>
           <Link to="/users" className="navbar-item">
             Users
           </Link>
