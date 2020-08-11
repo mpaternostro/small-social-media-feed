@@ -1,11 +1,15 @@
 import React, { useState } from "react";
-import { useDispatch } from "react-redux";
-import { postAdded } from "./postsSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { postUpdated } from "./postsSlice";
 
-function AddPostForm() {
-  const [title, setTitle] = useState("");
-  const [author, setAuthor] = useState("");
-  const [body, setBody] = useState("");
+function EditPostForm({ match, history }) {
+  const { postId } = match.params;
+  const originalPost = useSelector((st) =>
+    st.posts.find(({ id }) => id === postId)
+  );
+  const [title, setTitle] = useState(originalPost.title);
+  const [author, setAuthor] = useState(originalPost.author);
+  const [body, setBody] = useState(originalPost.body);
   const dispatch = useDispatch();
 
   const onTitleChange = (evt) => setTitle(evt.target.value);
@@ -15,16 +19,14 @@ function AddPostForm() {
   const handleSubmit = (evt) => {
     evt.preventDefault();
     if (!title || !author || !body) return;
-    dispatch(postAdded(title, author, body));
-    setTitle("");
-    setAuthor("");
-    setBody("");
+    dispatch(postUpdated({ title, author, body, id: postId }));
+    history.push("/");
   };
 
   return (
     <section className="section">
       <div className="container">
-        <h1 className="title">Add New Post</h1>
+        <h1 className="title">Edit Post</h1>
 
         <form onSubmit={handleSubmit}>
           <div className="field">
@@ -69,9 +71,14 @@ function AddPostForm() {
 
           <div className="field">
             <div className="control">
-              <button className="button is-link" type="submit">
-                Submit
-              </button>
+              <div className="buttons">
+                <button className="button is-link" type="submit">
+                  Submit
+                </button>
+                <button className="button is-link" onClick={history.goBack}>
+                  Cancel
+                </button>
+              </div>
             </div>
           </div>
         </form>
@@ -80,4 +87,4 @@ function AddPostForm() {
   );
 }
 
-export default AddPostForm;
+export default EditPostForm;
