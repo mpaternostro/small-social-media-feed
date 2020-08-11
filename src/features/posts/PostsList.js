@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 
 function PostsList() {
@@ -7,6 +8,14 @@ function PostsList() {
     <article className="notification" key={id}>
       <strong>{title}</strong>
       <p>{body}</p>
+      <div className="buttons mt-2">
+        <Link className="button" to={`/post/${id}`}>
+          View Post
+        </Link>
+        <Link className="button" to={`/editPost/${id}`}>
+          Edit Post
+        </Link>
+      </div>
     </article>
   ));
 
