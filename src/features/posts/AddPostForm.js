@@ -1,25 +1,34 @@
 import React, { useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { postAdded } from "./postsSlice";
 
 function AddPostForm() {
   const [title, setTitle] = useState("");
-  const [author, setAuthor] = useState("");
+  const [userId, setUserId] = useState("");
   const [body, setBody] = useState("");
   const dispatch = useDispatch();
+  const users = useSelector((st) => st.users);
 
   const onTitleChange = (evt) => setTitle(evt.target.value);
-  const onAuthorChange = (evt) => setAuthor(evt.target.value);
+  const onUserChange = (evt) => setUserId(evt.target.value);
   const onBodyChange = (evt) => setBody(evt.target.value);
+
+  const incompleteForm = !title || !userId || !body;
 
   const handleSubmit = (evt) => {
     evt.preventDefault();
-    if (!title || !author || !body) return;
-    dispatch(postAdded(title, author, body));
+    if (incompleteForm) return;
+    dispatch(postAdded(title, userId, body));
     setTitle("");
-    setAuthor("");
+    setUserId("");
     setBody("");
   };
+
+  const renderedUsers = users.map((user) => (
+    <option key={user.id} value={user.id}>
+      {user.name}
+    </option>
+  ));
 
   return (
     <section className="section">
@@ -45,11 +54,9 @@ function AddPostForm() {
             <label className="label">Author:</label>
             <div className="control">
               <div className="select">
-                <select onChange={onAuthorChange} value={author}>
+                <select onChange={onUserChange} value={userId}>
                   <option></option>
-                  <option>Charly</option>
-                  <option>Ringo</option>
-                  <option>Marce</option>
+                  {renderedUsers}
                 </select>
               </div>
             </div>
@@ -69,7 +76,12 @@ function AddPostForm() {
 
           <div className="field">
             <div className="control">
-              <button className="button is-link" type="submit">
+              <button
+                className="button is-link"
+                title={`${incompleteForm ? "Disabled button" : ""}`}
+                disabled={incompleteForm}
+                type="submit"
+              >
                 Submit
               </button>
             </div>

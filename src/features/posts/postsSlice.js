@@ -1,19 +1,22 @@
 import { createSlice, nanoid } from "@reduxjs/toolkit";
+import { sub } from "date-fns";
 
 const initialState = [
   {
-    userId: 1,
     id: "1",
-    author: "Ringo",
+    userId: "1",
+    date: sub(new Date(), { hours: 1 }).toISOString(),
+    reactions: { thumbsUp: 3 },
     title:
       "sunt aut facere repellat provident occaecati excepturi optio reprehenderit",
     body:
       "quia et suscipit suscipit recusandae consequuntur expedita et cum reprehenderit molestiae ut ut quas totam nostrum rerum est autem sunt rem eveniet architecto",
   },
   {
-    userId: 1,
     id: "2",
-    author: "Charly",
+    userId: "2",
+    date: sub(new Date(), { hours: 2, minutes: 30 }).toISOString(),
+    reactions: {},
     title: "qui est esse",
     body:
       "est rerum tempore vitae sequi sint nihil reprehenderit dolor beatae ea dolores neque fugiat blanditiis voluptate porro vel nihil molestiae ut reiciendis qui aperiam non debitis possimus qui neque nisi nulla",
@@ -28,29 +31,39 @@ const postsSlice = createSlice({
       reducer(state, action) {
         state.push(action.payload);
       },
-      prepare(title, author, body) {
+      prepare(title, userId, body) {
         return {
           payload: {
             id: nanoid(),
+            date: new Date().toISOString(),
             title,
-            author,
+            userId,
             body,
           },
         };
       },
     },
     postUpdated: (state, action) => {
-      const { title, author, body, id } = action.payload;
+      const { title, userId, body, id } = action.payload;
       const existingPost = state.find((post) => post.id === id);
       if (existingPost) {
         existingPost.title = title;
-        existingPost.author = author;
+        existingPost.userId = userId;
         existingPost.body = body;
+      }
+    },
+    reactionAdded: (state, action) => {
+      const { desc, postId } = action.payload;
+      const { reactions } = state.find((post) => post.id === postId);
+      if (reactions[desc]) {
+        reactions[desc] += 1;
+      } else {
+        reactions[desc] = 1;
       }
     },
   },
 });
 
-export const { postAdded, postUpdated } = postsSlice.actions;
+export const { postAdded, postUpdated, reactionAdded } = postsSlice.actions;
 
 export default postsSlice.reducer;
