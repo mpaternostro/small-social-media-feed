@@ -7,21 +7,31 @@ function EditPostForm({ match, history }) {
   const originalPost = useSelector((st) =>
     st.posts.find(({ id }) => id === postId)
   );
+  const users = useSelector((st) => st.users);
+
   const [title, setTitle] = useState(originalPost.title);
-  const [author, setAuthor] = useState(originalPost.author);
+  const [userId, setUserId] = useState(originalPost.userId);
   const [body, setBody] = useState(originalPost.body);
   const dispatch = useDispatch();
 
   const onTitleChange = (evt) => setTitle(evt.target.value);
-  const onAuthorChange = (evt) => setAuthor(evt.target.value);
+  const onUserChange = (evt) => setUserId(evt.target.value);
   const onBodyChange = (evt) => setBody(evt.target.value);
+
+  const incompleteForm = !title || !userId || !body;
 
   const handleSubmit = (evt) => {
     evt.preventDefault();
-    if (!title || !author || !body) return;
-    dispatch(postUpdated({ title, author, body, id: postId }));
+    if (incompleteForm) return;
+    dispatch(postUpdated({ title, userId, body, id: postId }));
     history.push("/");
   };
+
+  const renderedUsers = users.map((user) => (
+    <option key={user.id} value={user.id}>
+      {user.name}
+    </option>
+  ));
 
   return (
     <section className="section">
@@ -47,11 +57,9 @@ function EditPostForm({ match, history }) {
             <label className="label">Author:</label>
             <div className="control">
               <div className="select">
-                <select onChange={onAuthorChange} value={author}>
+                <select onChange={onUserChange} value={userId}>
                   <option></option>
-                  <option>Charly</option>
-                  <option>Ringo</option>
-                  <option>Marce</option>
+                  {renderedUsers}
                 </select>
               </div>
             </div>
@@ -72,7 +80,12 @@ function EditPostForm({ match, history }) {
           <div className="field">
             <div className="control">
               <div className="buttons">
-                <button className="button is-link" type="submit">
+                <button
+                  className="button is-link"
+                  title={`${incompleteForm ? "Disabled button" : ""}`}
+                  disabled={incompleteForm}
+                  type="submit"
+                >
                   Submit
                 </button>
                 <button className="button is-link" onClick={history.goBack}>
