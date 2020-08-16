@@ -1,29 +1,27 @@
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { postUpdated } from "./postsSlice";
+import { postUpdated, selectPostById } from "./postsSlice";
 
 function EditPostForm({ match, history }) {
   const { postId } = match.params;
-  const originalPost = useSelector((st) =>
-    st.posts.find(({ id }) => id === postId)
-  );
+  const originalPost = useSelector((st) => selectPostById(st, postId));
   const users = useSelector((st) => st.users);
 
   const [title, setTitle] = useState(originalPost.title);
-  const [userId, setUserId] = useState(originalPost.userId);
-  const [body, setBody] = useState(originalPost.body);
+  const [user, setUser] = useState(originalPost.user);
+  const [content, setContent] = useState(originalPost.content);
   const dispatch = useDispatch();
 
   const onTitleChange = (evt) => setTitle(evt.target.value);
-  const onUserChange = (evt) => setUserId(evt.target.value);
-  const onBodyChange = (evt) => setBody(evt.target.value);
+  const onUserChange = (evt) => setUser(evt.target.value);
+  const onContentChange = (evt) => setContent(evt.target.value);
 
-  const incompleteForm = !title || !userId || !body;
+  const incompleteForm = !title || !user || !content;
 
   const handleSubmit = (evt) => {
     evt.preventDefault();
     if (incompleteForm) return;
-    dispatch(postUpdated({ title, userId, body, id: postId }));
+    dispatch(postUpdated({ title, user, content, id: postId }));
     history.push("/");
   };
 
@@ -57,7 +55,7 @@ function EditPostForm({ match, history }) {
             <label className="label">Author:</label>
             <div className="control">
               <div className="select">
-                <select onChange={onUserChange} value={userId}>
+                <select onChange={onUserChange} value={user}>
                   <option></option>
                   {renderedUsers}
                 </select>
@@ -71,8 +69,8 @@ function EditPostForm({ match, history }) {
               <textarea
                 className="textarea"
                 rows="2"
-                value={body}
-                onChange={onBodyChange}
+                value={content}
+                onChange={onContentChange}
               />
             </div>
           </div>

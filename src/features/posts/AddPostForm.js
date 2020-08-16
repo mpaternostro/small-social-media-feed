@@ -1,27 +1,38 @@
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { postAdded } from "./postsSlice";
+import { unwrapResult } from "@reduxjs/toolkit";
+import { addNewPost } from "./postsSlice";
 
 function AddPostForm() {
   const [title, setTitle] = useState("");
-  const [userId, setUserId] = useState("");
-  const [body, setBody] = useState("");
+  const [user, setUser] = useState("");
+  const [content, setContent] = useState("");
+  const [addRequestStatus, setAddRequestStatus] = useState("idle");
   const dispatch = useDispatch();
   const users = useSelector((st) => st.users);
 
   const onTitleChange = (evt) => setTitle(evt.target.value);
-  const onUserChange = (evt) => setUserId(evt.target.value);
-  const onBodyChange = (evt) => setBody(evt.target.value);
+  const onUserChange = (evt) => setUser(evt.target.value);
+  const onContentChange = (evt) => setContent(evt.target.value);
 
-  const incompleteForm = !title || !userId || !body;
+  const completedForm = [title, user, content].every(Boolean);
+  const canSubmit = completedForm && addRequestStatus === "idle";
 
-  const handleSubmit = (evt) => {
+  const handleSubmit = async (evt) => {
     evt.preventDefault();
-    if (incompleteForm) return;
-    dispatch(postAdded(title, userId, body));
-    setTitle("");
-    setUserId("");
-    setBody("");
+    if (!canSubmit) return;
+    try {
+      setAddRequestStatus("pending");
+      const resultAction = await dispatch(addNewPost({ title, user, content }));
+      unwrapResult(resultAction);
+      setTitle("");
+      setUser("");
+      setContent("");
+    } catch (err) {
+      console.error("Failed to save new post", err);
+    } finally {
+      setAddRequestStatus("idle");
+    }
   };
 
   const renderedUsers = users.map((user) => (
@@ -54,7 +65,7 @@ function AddPostForm() {
             <label className="label">Author:</label>
             <div className="control">
               <div className="select">
-                <select onChange={onUserChange} value={userId}>
+                <select onChange={onUserChange} value={user}>
                   <option></option>
                   {renderedUsers}
                 </select>
@@ -68,8 +79,8 @@ function AddPostForm() {
               <textarea
                 className="textarea"
                 rows="2"
-                value={body}
-                onChange={onBodyChange}
+                value={content}
+                onChange={onContentChange}
               />
             </div>
           </div>
@@ -77,9 +88,11 @@ function AddPostForm() {
           <div className="field">
             <div className="control">
               <button
-                className="button is-link"
-                title={`${incompleteForm ? "Disabled button" : ""}`}
-                disabled={incompleteForm}
+                className={`button is-link ${
+                  addRequestStatus === "pending" && "is-loading"
+                }`}
+                title={`${!canSubmit ? "Disabled button" : ""}`}
+                disabled={!canSubmit}
                 type="submit"
               >
                 Submit
