@@ -1,23 +1,27 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Link } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import PostAuthor from "./PostAuthor";
 import TimeAgo from "./TimeAgo";
 import ReactionButtons from "./ReactionButtons";
+import { selectAllPosts, fetchPosts } from "./postsSlice";
 
 function PostsList() {
-  const posts = useSelector((state) => state.posts);
+  const dispatch = useDispatch();
+  const posts = useSelector(selectAllPosts);
+  const postsStatus = useSelector((state) => state.posts.status);
+
   const sortedPosts = posts
     .slice()
     .sort((a, b) => b.date.localeCompare(a.date));
   const renderedPosts = sortedPosts.map(
-    ({ title, body, id, userId, date, reactions }) => (
+    ({ title, content, id, user, date, reactions }) => (
       <article className="notification" key={id}>
         <p className="title is-4">{title}</p>
         <p className="subtitle is-6">
-          <PostAuthor userId={userId} /> <TimeAgo date={date} />
+          <PostAuthor userId={user} /> <TimeAgo date={date} />
         </p>
-        <p className="subtitle is-6">{body}</p>
+        <p className="subtitle is-6">{content}</p>
         <ReactionButtons userReactions={reactions} postId={id} />
         <div className="buttons mt-4">
           <Link className="button" to={`/post/${id}`}>
@@ -31,11 +35,31 @@ function PostsList() {
     )
   );
 
+  let content;
+
+  if (postsStatus === "loading") {
+    content = (
+      <div className="level-item">
+        <span className="icon has-text-info is-large">
+          <i className="fas fa-spinner fa-pulse fa-3x"></i>
+        </span>
+      </div>
+    );
+  } else if (postsStatus === "success") {
+    content = renderedPosts;
+  } else if (postsStatus === "failed") {
+    content = "Failed to load new posts";
+  }
+
+  useEffect(() => {
+    if (postsStatus === "idle") dispatch(fetchPosts());
+  }, [postsStatus, dispatch]);
+
   return (
     <section className="section">
       <div className="container">
         <h1 className="title">Posts</h1>
-        {renderedPosts}
+        {content}
       </div>
     </section>
   );
