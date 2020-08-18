@@ -4,6 +4,7 @@ import { useSelector, useDispatch } from "react-redux";
 import PostAuthor from "./PostAuthor";
 import TimeAgo from "./TimeAgo";
 import ReactionButtons from "./ReactionButtons";
+import Spinner from "../../app/Spinner";
 import { selectAllPosts, fetchPosts } from "./postsSlice";
 
 function PostsList() {
@@ -38,13 +39,7 @@ function PostsList() {
   let content;
 
   if (postsStatus === "loading") {
-    content = (
-      <div className="level-item">
-        <span className="icon has-text-info is-large">
-          <i className="fas fa-spinner fa-pulse fa-3x"></i>
-        </span>
-      </div>
-    );
+    content = <Spinner />;
   } else if (postsStatus === "success") {
     content = renderedPosts;
   } else if (postsStatus === "failed") {
