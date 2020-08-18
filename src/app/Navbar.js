@@ -1,5 +1,10 @@
 import React, { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
+import {
+  fetchNotifications,
+  getNotificationStatus,
+} from "../features/notifications/notificationsSlice";
 import { createUseStyles } from "react-jss";
 
 const useStyles = createUseStyles({
@@ -8,6 +13,8 @@ const useStyles = createUseStyles({
 
 function Navbar() {
   const classes = useStyles();
+  const dispatch = useDispatch();
+  const notificationStatus = useSelector(getNotificationStatus);
   const [isOpen, setIsOpen] = useState(false);
 
   const toggleMenu = () => {
@@ -52,7 +59,15 @@ function Navbar() {
         </div>
         <div className="navbar-end">
           <div className="navbar-item">
-            <button className="button is-light">Refresh Notifications</button>
+            <button
+              className={`button is-light ${
+                notificationStatus === "pending" && "is-loading"
+              }`}
+              disabled={notificationStatus === "pending"}
+              onClick={() => dispatch(fetchNotifications())}
+            >
+              Refresh Notifications
+            </button>
           </div>
         </div>
       </div>
