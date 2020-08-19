@@ -1,11 +1,12 @@
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { postUpdated, selectPostById } from "./postsSlice";
+import { selectAllUsers } from "../users/usersSlice";
 
 function EditPostForm({ match, history }) {
   const { postId } = match.params;
   const originalPost = useSelector((st) => selectPostById(st, postId));
-  const users = useSelector((st) => st.users);
+  const users = useSelector(selectAllUsers);
 
   const [title, setTitle] = useState(originalPost.title);
   const [user, setUser] = useState(originalPost.user);
