@@ -1,40 +1,19 @@
 import React, { useEffect } from "react";
-import { Link } from "react-router-dom";
+
 import { useSelector, useDispatch } from "react-redux";
-import PostAuthor from "./PostAuthor";
-import TimeAgo from "./TimeAgo";
-import ReactionButtons from "./ReactionButtons";
+
 import Spinner from "../../app/Spinner";
-import { selectAllPosts, fetchPosts } from "./postsSlice";
+import { selectPostIds, fetchPosts } from "./postsSlice";
+import PostExcerpt from "./PostExcerpt";
 
 function PostsList() {
   const dispatch = useDispatch();
-  const posts = useSelector(selectAllPosts);
+  const orderedPostsIds = useSelector(selectPostIds);
   const postsStatus = useSelector((state) => state.posts.status);
 
-  const sortedPosts = posts
-    .slice()
-    .sort((a, b) => b.date.localeCompare(a.date));
-  const renderedPosts = sortedPosts.map(
-    ({ title, content, id, user, date, reactions }) => (
-      <article className="notification" key={id}>
-        <p className="title is-4">{title}</p>
-        <p className="subtitle is-6">
-          <PostAuthor userId={user} /> <TimeAgo date={date} />
-        </p>
-        <p className="subtitle is-6">{content}</p>
-        <ReactionButtons userReactions={reactions} postId={id} />
-        <div className="buttons mt-4">
-          <Link className="button" to={`/post/${id}`}>
-            View Post
-          </Link>
-          <Link className="button" to={`/editPost/${id}`}>
-            Edit Post
-          </Link>
-        </div>
-      </article>
-    )
-  );
+  const renderedPosts = orderedPostsIds.map((postId) => (
+    <PostExcerpt key={postId} postId={postId} />
+  ));
 
   let content;
 

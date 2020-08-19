@@ -1,10 +1,17 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import {
+  createSlice,
+  createAsyncThunk,
+  createEntityAdapter,
+} from "@reduxjs/toolkit";
 import { client } from "../../api/client";
 
-const initialState = {
-  notifications: [],
+const notificationsAdapter = createEntityAdapter({
+  sortComparer: (a, b) => b.date.localeCompare(a.date),
+});
+
+const initialState = notificationsAdapter.getInitialState({
   status: "idle",
-};
+});
 
 export const fetchNotifications = createAsyncThunk(
   "notifications/fetchNotifications",
@@ -23,7 +30,7 @@ const notificationsSlice = createSlice({
   initialState,
   reducers: {
     allNotificationsRead: (state, action) => {
-      state.notifications.forEach((notif) => (notif.read = true));
+      Object.values(state.entities).forEach((notif) => (notif.read = true));
     },
   },
   extraReducers: {
@@ -31,9 +38,10 @@ const notificationsSlice = createSlice({
       state.status = "pending";
     },
     [fetchNotifications.fulfilled]: (state, action) => {
-      state.notifications.forEach((notif) => (notif.isNew = !notif.read));
-      state.notifications.push(...action.payload);
-      state.notifications.sort((a, b) => b.date.localeCompare(a.date));
+      Object.values(state.entities).forEach(
+        (notif) => (notif.isNew = !notif.read)
+      );
+      notificationsAdapter.upsertMany(state, action.payload);
       state.status = "success";
     },
   },
@@ -43,7 +51,8 @@ export const { allNotificationsRead } = notificationsSlice.actions;
 
 export default notificationsSlice.reducer;
 
-export const selectAllNotifications = (state) =>
-  state.notifications.notifications;
-
 export const getNotificationStatus = (state) => state.notifications.status;
+
+export const {
+  selectAll: selectAllNotifications,
+} = notificationsAdapter.getSelectors((st) => st.notifications);
