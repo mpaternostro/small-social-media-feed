@@ -1,0 +1,25 @@
+{
+  "files": {
+    "main.css": "/small-social-media-feed/static/css/main.69eda509.chunk.css",
+    "main.js": "/small-social-media-feed/static/js/main.c47618e3.chunk.js",
+    "main.js.map": "/small-social-media-feed/static/js/main.c47618e3.chunk.js.map",
+    "runtime-main.js": "/small-social-media-feed/static/js/runtime-main.4a716893.js",
+    "runtime-main.js.map": "/small-social-media-feed/static/js/runtime-main.4a716893.js.map",
+    "static/css/2.0c0672e5.chunk.css": "/small-social-media-feed/static/css/2.0c0672e5.chunk.css",
+    "static/js/2.d2433b11.chunk.js": "/small-social-media-feed/static/js/2.d2433b11.chunk.js",
+    "static/js/2.d2433b11.chunk.js.map": "/small-social-media-feed/static/js/2.d2433b11.chunk.js.map",
+    "index.html": "/small-social-media-feed/index.html",
+    "precache-manifest.7bda3e665357f860ffd5df3ede71cce4.js": "/small-social-media-feed/precache-manifest.7bda3e665357f860ffd5df3ede71cce4.js",
+    "service-worker.js": "/small-social-media-feed/service-worker.js",
+    "static/css/2.0c0672e5.chunk.css.map": "/small-social-media-feed/static/css/2.0c0672e5.chunk.css.map",
+    "static/css/main.69eda509.chunk.css.map": "/small-social-media-feed/static/css/main.69eda509.chunk.css.map",
+    "static/js/2.d2433b11.chunk.js.LICENSE.txt": "/small-social-media-feed/static/js/2.d2433b11.chunk.js.LICENSE.txt"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.4a716893.js",
+    "static/css/2.0c0672e5.chunk.css",
+    "static/js/2.d2433b11.chunk.js",
+    "static/css/main.69eda509.chunk.css",
+    "static/js/main.c47618e3.chunk.js"
+  ]
+}
