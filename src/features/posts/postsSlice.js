@@ -83,3 +83,5 @@ export const selectPostsByUser = createSelector(
   [selectAllPosts, (st, userId) => userId],
   (posts, userId) => posts.filter((post) => post.user === userId)
 );
+
+export const getPostsStatus = (st) => st.posts.status;

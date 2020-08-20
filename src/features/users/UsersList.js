@@ -18,7 +18,12 @@ function UsersList() {
 
   let content;
   if (users.length > 0) {
-    content = renderedUsers;
+    content = (
+      <>
+        <h1 className="title">Users</h1>
+        <h2 className="subtitle">{renderedUsers}</h2>
+      </>
+    );
   } else {
     content = <Spinner />;
   }
@@ -26,10 +31,7 @@ function UsersList() {
   return (
     <section className="hero">
       <div className="hero-body">
-        <div className="container">
-          <h1 className="title">Users</h1>
-          <h2 className="subtitle">{content}</h2>
-        </div>
+        <div className="container">{content}</div>
       </div>
     </section>
   );
